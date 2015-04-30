@@ -8,11 +8,12 @@ window.onload = function(){
 		windowHeight = window.innerHeight
 
 	var camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 10000);
+    //var camera = new THREE.OrthographicCamera( windowWidth / - 2, windowWidth / 2, windowHeight / 2, windowHeight / - 2, 1, 10000 );
     scene.add(camera)
     camera.rotation.order = 'YXZ'
-    camera.position.z += 600;
-    camera.position.x += 600;
-    camera.position.y += 700;
+    camera.position.z += 800;
+    camera.position.x += 800;
+    camera.position.y += 500;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 
@@ -37,8 +38,8 @@ window.onload = function(){
     //let's set up those three-dimensional orthogonal planes
 
     var planes = [],
-    	width = 300
-    	height = 400
+    	width = 150
+    	height = 200
 
     //plane in x-y space
     var planeXY = new THREE.Geometry()
@@ -89,26 +90,65 @@ window.onload = function(){
     	xzMesh = new THREE.Mesh(planeXZ, materialXZ)
 
     //construction of d20
-    d20Geo.vertices.push(planeYZ.vertices[3], planeXY.vertices[2], planeXZ.vertices[3])
-    d20Geo.faces.push(new THREE.Face3(0, 1, 2));
+    d20Geo.vertices.push(planeYZ.vertices[3], 
+				    	planeXY.vertices[2], //1 
+				    	planeXZ.vertices[3], 
+						planeXZ.vertices[0], 
+						planeXY.vertices[3], //4
+						planeXZ.vertices[1], 
+						planeYZ.vertices[2], //6
+						planeXZ.vertices[2], 
+						planeYZ.vertices[0], //8
+						planeYZ.vertices[1], 
+						planeXY.vertices[1], //10
+						planeXY.vertices[0],
+						planeXZ.vertices[1]) // 12
+
+
+    d20Geo.faces.push(new THREE.Face3(0, 1, 2),
+    				new THREE.Face3(0, 2, 3),
+					new THREE.Face3(0, 3, 4),
+					new THREE.Face3(4, 5, 6),
+					new THREE.Face3(6, 1, 7),
+					new THREE.Face3(5, 6, 7),
+					new THREE.Face3(0, 6, 1),
+					new THREE.Face3(0, 6, 4),
+					new THREE.Face3(3, 2, 8), //xz3, xz0
+					new THREE.Face3(5, 7, 9),
+					new THREE.Face3(1, 2, 10), // xy2, xz3, xy1
+					new THREE.Face3(1, 10, 7), // xy2, xy1, xz2
+					new THREE.Face3(4, 11, 5), //xz1
+					new THREE.Face3(4, 11, 3),
+					new THREE.Face3(10, 8, 2), //xy1, yz0, xz3
+					new THREE.Face3(10, 9, 7), //xy1, yz1, xz2
+					new THREE.Face3(10, 8, 9),
+					new THREE.Face3(11, 8, 3), //xy0, yz0, xz0
+					new THREE.Face3(11, 9, 5),
+					new THREE.Face3(11, 8, 9))  
+
+
     var d20material = new THREE.MeshBasicMaterial( {color: 0x93F05D, side: THREE.DoubleSide} )
-    d20material.opacity = 0.6
+    //d20material.opacity = 0.6
     d20material.transparent = true
     var d20Mesh = new THREE.Mesh(d20Geo, d20material)
     scene.add(d20Mesh)
     var wireframe = new THREE.WireframeHelper(d20Mesh, 0xff0000)
     scene.add(wireframe)
 
-    scene.add(xyMesh) // orange
-    scene.add(yzMesh) // blue
-    scene.add(xzMesh) // red
+    // scene.add(xyMesh) // orange
+    // scene.add(yzMesh) // blue
+    // scene.add(xzMesh) // red
 
     function animate() {
-        requestAnimationFrame( animate )
-         camera.position.x = Math.sin(clock.getElapsedTime()) * 1000
-         camera.position.z = Math.cos(clock.getElapsedTime()) * 1000
+	    // camera.position.x = Math.sin(clock.getElapsedTime()) * 1000	     
+	    // camera.position.z = Math.cos(clock.getElapsedTime()) * 1000
+	    d20Mesh.rotation.x = Math.sin(clock.getElapsedTime()) * 10	
+	    //d20Mesh.position.y += Math.cos(clock.getElapsedTime() - Math.PI) * 10
+	    // camera.position.x = Math.sin(270 * Math.PI / 180) * 1000	     
+	    // camera.position.z = Math.cos(270 * Math.PI / 180) * 1000
         camera.lookAt(new THREE.Vector3(0, 0, 0))
         renderer.render(scene, camera)
+        requestAnimationFrame( animate )
     }
       animate()
 }
