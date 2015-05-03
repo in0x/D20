@@ -128,7 +128,7 @@ window.onload = function(){
 
 
     var d20material = new THREE.MeshBasicMaterial( {color: 0x93F05D, side: THREE.DoubleSide} )
-    //d20material.opacity = 0.6
+    d20material.opacity = 0.8
     d20material.transparent = true
     var d20Mesh = new THREE.Mesh(d20Geo, d20material)
     scene.add(d20Mesh)
@@ -139,13 +139,20 @@ window.onload = function(){
     // scene.add(yzMesh) // blue
     // scene.add(xzMesh) // red
 
+    var referenceCube = new THREE.Mesh(new THREE.CubeGeometry( 90, 90, 90), new THREE.MeshLambertMaterial( {color: 'orange'}))
+    referenceCube.position.x -= 400
+    scene.add(referenceCube)
+
     function animate() {
+        var time = clock.getElapsedTime()
 	    // camera.position.x = Math.sin(clock.getElapsedTime()) * 1000	     
 	    // camera.position.z = Math.cos(clock.getElapsedTime()) * 1000
-	    d20Mesh.rotation.x = Math.sin(clock.getElapsedTime()) * 10	
+	    //d20Mesh.rotation.x = Math.sin(time) * 10	
 	    //d20Mesh.position.y += Math.cos(clock.getElapsedTime() - Math.PI) * 10
 	    // camera.position.x = Math.sin(270 * Math.PI / 180) * 1000	     
 	    // camera.position.z = Math.cos(270 * Math.PI / 180) * 1000
+        d20Mesh.position.y = (Math.cos(time * 2) * 10 * Math.sign(Math.cos(time * 2) * 10) * (3/time)) * 100
+        console.log(d20Mesh.position.y)
         camera.lookAt(new THREE.Vector3(0, 0, 0))
         renderer.render(scene, camera)
         requestAnimationFrame( animate )
